@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
+        @import url('https://unpkg.com/normalize.css');
+        html {
+            font-family: 'Roboto Mono', monospace;
+            line-height: 1.5;
+        }
+
+        div#content {
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        div#header {
+            align-items: center;
+            gap: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        div#response {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            top: 50%;
+            width: 100%; /* Change the width to 100% */
+            color: lightslategray;
+        }
+
+        form#query-form {
+            bottom: 20px;
+            position: fixed;
+            display: flex;
+            gap: 20px;
+            margin: 0 auto;
+            width: 90%;
+        }
+
+        form#query-form input {
+            flex: 1;
+            padding: 5px;
+            background-color: rgb(178, 181, 184);
+            color: white;
+        }
+    </style>
+</head>
+<body style="background-color: #252526;">
+<div id="content">
+    <div id="header">
+        <h1 style="padding: 50px; padding-top: 0%; color: lightslategray">Our group made an AI chatbot to help people identify phishing. We hope that this will help the phishing epidemic that currently scams people in the world. To use this put in the text of your email that was sent to you and the AI will identify if it suspects phishing.</h1>
+    </div>
+
+    <div id="response">
+            <p>{{ output }}</p>
+    </div>
+    <form id="query-form">
+        <input
+                autofocus
+                name="query"
+                placeholder="Enter your email here"
+                type="text"
+                style="background-color: rgb(178, 181, 184); color: white"
+        />
+        <button type="submit" style="background-color: lightslategray; color: black">Submit</button>
+    </form>
+</div>
+
+<script>
+    document.querySelector('#query-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const contents = e.target.elements.query.value;
+        const outputElement = document.getElementById('response');
+
+        var apiUrl = "http://127.0.0.1:5000/get-user/" + encodeURIComponent(contents);
+        fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                var jsonText = data;
+                outputElement.textContent = jsonText.type;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+</script>
+</body>
+</html>
